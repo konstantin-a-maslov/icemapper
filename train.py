@@ -8,7 +8,7 @@ import utils
 
 def main():
     features = ["grd"]
-    model_name = "20240924_ICEmapper_v1_grdonly"
+    model_name = "20240925_ICEmapper_v1_grdonly"
     
     data_folder = "/extravolume_debris/data/icemapper"
     timesteps = 15
@@ -23,7 +23,7 @@ def main():
     
     train_sampler = dataloaders.RandomSampler(train_data, patch_size, features)
     train_sampler = dataloaders.move_sampler_to_ram(train_sampler, keys=features + ["outlines"])
-    train_dataloader = dataloaders.DataLoader(
+    train_dataloader, steps_per_epoch = dataloaders.DataLoader(
         train_sampler,
         plugins=[
             dataloaders.ShuffleTimeIndex(p=0.2),
@@ -39,11 +39,10 @@ def main():
         ],
         batch_size=batch_size,
     )
-    steps_per_epoch = len(train_dataloader)
     
     val_sampler = dataloaders.ConsecutiveSampler(val_data, patch_size, features)
     val_sampler = dataloaders.move_sampler_to_ram(val_sampler, keys=features + ["outlines"])
-    val_dataloader = dataloaders.DataLoader(
+    val_dataloader, _ = dataloaders.DataLoader(
         val_sampler,
         plugins=[],
         batch_size=batch_size,
@@ -89,6 +88,7 @@ def main():
     model.fit(
         train_dataloader,
         epochs=150,
+        steps_per_epoch=steps_per_epoch,
         validation_data=val_dataloader,
         callbacks=callbacks,
         verbose=1,
