@@ -42,7 +42,7 @@ class Sampler(abc.ABC):
         
     def load_time_index(self):
         self.time_index = {
-            f: self.tile_group.attrs[f"{f}_base_time_idx"] for f in self.features 
+            f: self.tile_group.attrs[f"{f}_base_time_idx"].copy() for f in self.features 
         }
         
     @abc.abstractmethod
