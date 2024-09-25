@@ -2,7 +2,7 @@
 
 [Konstantin A. Maslov](https://people.utwente.nl/k.a.maslov), [Thomas Schellenberger](https://www.mn.uio.no/geo/english/people/aca/geohyd/thosche/), [Claudio Persello](https://people.utwente.nl/c.persello), [Alfred Stein](https://people.utwente.nl/a.stein)
 
-[[`Paper`](#)] [[`Datasets`](#datasets)] [[`BibTeX`](#citing)] 
+[[`Paper`](https://ieeexplore.ieee.org/document/10640676)] [[`Datasets`](#datasets)] [[`BibTeX`](#citing)] 
 
 <br/>
 
@@ -37,3 +37,28 @@ This software is licensed under the [GNU General Public License v2](LICENSE).
 
 
 ## Citing
+
+To cite the paper/repository, please use the following bib entry. 
+
+<!-- TODO: Update BibTeX once published in a journal```
+@article{INDEX,
+    title={TITLE},
+    author={Maslov, Konstantin A. and Persello, Claudio and Schellenberger, Thomas and Stein, Alfred},
+    journal={},
+    year={YEAR},
+    volume={},
+    number={},
+    pages={},
+    doi={}
+}
+``` -->
+```
+@inproceedings{glaciermappingfromsar2024,
+    title={Glacier Mapping from Sentinel-1 SAR Time Series with Deep Learning in Svalbard}, 
+    author={Maslov, Konstantin A. and Schellenberger, Thomas and Persello, Claudio and Stein, Alfred},
+    booktitle={IGARSS 2024 - 2024 IEEE International Geoscience and Remote Sensing Symposium}, 
+    year={2024},
+    pages={14-17},
+    doi={10.1109/IGARSS53475.2024.10640676}
+}
+```
