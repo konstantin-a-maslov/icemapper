@@ -1,9 +1,8 @@
-import numpy as np
 import tensorflow as tf
-import dataloaders.transformations
+import numpy as np
 
 
-class DataLoader(tf.keras.utils.Sequence):
+class DataSequence():
     def __init__(self, sampler, plugins, batch_size, labels="outlines", len_factor=1):
         self.sampler = sampler
         self.plugins = plugins
@@ -63,3 +62,24 @@ class DataLoader(tf.keras.utils.Sequence):
         batch_x = {_: batch[_] for _ in batch if _ != self.labels}
         batch_y = batch[self.labels]
         return batch_x, batch_y
+
+    
+def DataLoader(sampler, plugins, batch_size, labels="outlines", prefetch=4, timesteps=15, n_classes=2, len_factor=1):
+    data_seq = DataSequence(sampler, plugins, batch_size, labels, len_factor)
+    steps_per_epoch = len(data_seq)
+    patch_size = sampler.patch_size
+    n_features = len(sampler.features)
+    def gen():
+        while True:
+            for step in range(steps_per_epoch):
+                x, y = data_seq[step]
+                yield x, y
+    dataloader = tf.data.Dataset.from_generator(
+        gen,
+        output_signature=(
+              {"inputs": tf.TensorSpec(shape=(batch_size, timesteps, patch_size, patch_size, n_features), dtype=tf.float32, name="inputs")},
+              tf.TensorSpec(shape=(batch_size, patch_size, patch_size, n_classes), dtype=tf.float32)
+        )
+    )
+    dataloader = dataloader.prefetch(prefetch)
+    return dataloader, steps_per_epoch
