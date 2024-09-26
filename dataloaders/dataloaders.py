@@ -1,5 +1,8 @@
 import tensorflow as tf
 import numpy as np
+import dataloaders
+import dataloaders.transformations
+import gc
 
 
 class DataSequence():
@@ -64,22 +67,85 @@ class DataSequence():
         return batch_x, batch_y
 
     
-def DataLoader(sampler, plugins, batch_size, labels="outlines", prefetch=4, timesteps=15, n_classes=2, len_factor=1):
-    data_seq = DataSequence(sampler, plugins, batch_size, labels, len_factor)
+def DataLoader(
+    dataset_path, 
+    mode,
+    patch_size, 
+    features,
+    batch_size, 
+    labels="outlines", 
+    prefetch=4, 
+    timesteps=15, 
+    n_classes=2, 
+    len_factor=1
+):
+    if not mode in {"train", "val"}:
+        raise ValueError
+        
+    if mode == "train":
+        sampler = dataloaders.RandomSampler(dataset_path, patch_size, features)
+    else:
+        sampler = dataloaders.ConsecutiveSampler(dataset_path, patch_size, features)
+    data_seq = DataSequence(sampler, [], batch_size, labels, len_factor)
     steps_per_epoch = len(data_seq)
-    patch_size = sampler.patch_size
-    n_features = len(sampler.features)
-    def gen():
+    
+    del sampler
+    del data_seq
+    
+    def gen(
+        dataset_path, 
+        mode,
+        patch_size, 
+        features,
+        batch_size,  
+        labels,  
+        len_factor
+    ):
+        dataset_path = dataset_path.decode()
+        mode = mode.decode()
+        features = [_.decode() for _ in features]
+        labels = labels.decode()
+
+        if mode == "train":
+            sampler = dataloaders.RandomSampler(dataset_path, patch_size, features)
+            plugins = [
+                dataloaders.ShuffleTimeIndex(p=0.2),
+                dataloaders.Augmentation([
+                    dataloaders.transformations.random_vertical_flip(p=0.5),
+                    dataloaders.transformations.random_horizontal_flip(p=0.5),
+                    dataloaders.transformations.random_rotation(p=0.75),
+                    dataloaders.transformations.crop_and_scale(patch_size=patch_size, scale=0.8, p=0.25),
+                    dataloaders.transformations.add_gamma_correction(gamma_l=0.8, gamma_r=1.2, p=0.25),
+                    dataloaders.transformations.add_gaussian_shift(sigma=0.025, p=0.25), 
+                ]),
+                dataloaders.AddLabelSmoothing(),
+            ]
+        else:
+            sampler = dataloaders.ConsecutiveSampler(dataset_path, patch_size, features)
+            plugins = []
+        sampler = dataloaders.move_sampler_to_ram(sampler, keys=features + [labels])
+        data_seq = DataSequence(sampler, plugins, batch_size, labels, len_factor)
+        steps_per_epoch = len(data_seq)
+        
         while True:
             for step in range(steps_per_epoch):
                 x, y = data_seq[step]
                 yield x, y
+            if mode == "val":
+                break
+        
+        del sampler
+        del data_seq
+        gc.collect()
+                
+    n_features = len(features)
     dataloader = tf.data.Dataset.from_generator(
         gen,
         output_signature=(
               {"inputs": tf.TensorSpec(shape=(batch_size, timesteps, patch_size, patch_size, n_features), dtype=tf.float32, name="inputs")},
               tf.TensorSpec(shape=(batch_size, patch_size, patch_size, n_classes), dtype=tf.float32)
-        )
+        ),
+        args=(dataset_path, mode, patch_size, features, batch_size, labels, len_factor)
     )
     dataloader = dataloader.prefetch(prefetch)
     return dataloader, steps_per_epoch

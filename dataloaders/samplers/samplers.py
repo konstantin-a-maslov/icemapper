@@ -1,11 +1,13 @@
+import h5py
 import numpy as np
 import abc
 
 
 class Sampler(abc.ABC):
-    def __init__(self, dataset, patch_size, features, labels):
-        self.dataset = dataset
-        self.tiles = list(dataset.keys())
+    def __init__(self, dataset_path, patch_size, features, labels):
+        self.dataset_path = dataset_path
+        self.dataset = h5py.File(dataset_path, "r")
+        self.tiles = list(self.dataset.keys())
         self.patch_size = patch_size
         self.features = features
         self.labels = labels
