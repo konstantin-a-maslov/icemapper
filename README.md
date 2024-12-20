@@ -36,6 +36,11 @@ Our results highlight the applicability of SAR data in glacier mapping with the 
 This software is licensed under the [GNU General Public License v2](LICENSE).
 
 
+## Ice divides
+
+We moved the algorithms for ice divides reconstruction to [a different repository](https://github.com/konstantin-a-maslov/massive_ice_divides).
+
+
 ## Citing
 
 To cite the paper/repository, please use the following bib entry. 
