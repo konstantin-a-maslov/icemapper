@@ -70,7 +70,7 @@ def main(args):
     
     if args.grd_paths is None or args.insar_paths is None:
         raise ValueError("GRD paths and InSAR coh paths must be provided")
-    if len(args.grd_paths) != 15 or len(args.insar_paths) != 15:
+    if len(args.grd_paths) != timesteps or len(args.insar_paths) != timesteps:
         raise ValueError(f"{timesteps} GRD and {timesteps} InSAR coh scenes must be provided")
         
     with open("data_stats.pickle", "rb") as stats_src:
@@ -103,7 +103,7 @@ def main(args):
         insar_scenes.append(scene_reproj)
     
     patch_size, features = 384, ["grd", "insar"]
-    model_name = "20241009_ICEmapper_v2_grdinsar"
+    model_name = args.model_name
     model = icemapper.ICEmapper_v2((timesteps, patch_size, patch_size, len(features)), 2, name=model_name)
     model.load_weights(f"weights/{model_name}.h5")
     
@@ -126,6 +126,7 @@ if __name__ == "__main__":
     parser.add_argument("--grd_paths", nargs="*", help="GRD scene paths")
     parser.add_argument("--insar_paths", nargs="*", help="InSAR scene paths")
     parser.add_argument("--ref_path", help="Reference raster path for reprojection")
+    parser.add_argument("--model_name", default="20241009_ICEmapper_v2_grdinsar", help="Model name")
     args = parser.parse_args()
     
     main(args)

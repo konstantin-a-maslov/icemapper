@@ -1,16 +1,20 @@
 import h5py
 import numpy as np
 import abc
+import threading
+from tqdm import tqdm
 
 
 class Sampler(abc.ABC):
     def __init__(self, dataset_path, patch_size, features, labels):
         self.dataset_path = dataset_path
         self.dataset = h5py.File(dataset_path, "r")
-        self.tiles = list(self.dataset.keys())
+        self.tiles = list(self.dataset.keys()) # [::100] for debugging
+        # self.tiles = [_ for _ in self.tiles if _.split('_')[1] in {"2016", "2017"}] # use only Paul et al.
         self.patch_size = patch_size
         self.features = features
         self.labels = labels
+        self.lock = threading.Lock()
 
     def set_dataloader(self, dataloader):
         self.dataloader = dataloader
@@ -27,13 +31,14 @@ class Sampler(abc.ABC):
             self.n_patches += (height // self.patch_size) * (width // self.patch_size)
 
     def sample(self, before_sampling_plugins=None):
-        self.sample_image()
-        self.load_time_index()
-        if before_sampling_plugins is not None:
-            for plugin in before_sampling_plugins:
-                plugin.before_sampling()
-        self.sample_patch()
-        return self.patch
+        with self.lock:
+            self.sample_image()
+            self.load_time_index()
+            if before_sampling_plugins is not None:
+                for plugin in before_sampling_plugins:
+                    plugin.before_sampling()
+            self.sample_patch()
+            return self.patch
             
     def reset(self):
         pass
@@ -52,14 +57,18 @@ class Sampler(abc.ABC):
         raise NotImplementedError
         
     def _extract_patch(self):
-        stack = []
-        for feature in self.features:
+        timesteps = len(self.time_index[self.features[0]])
+        stack = np.empty(
+            (timesteps, self.patch_size, self.patch_size, len(self.features)), 
+            dtype=np.float32
+        )
+        for feature_idx, feature in enumerate(self.features):
             feature_patch = self.tile_group[feature][
-                self.time_index[feature], self.y:self.y + self.patch_size, self.x:self.x + self.patch_size, :
+                self.time_index[feature], self.y:self.y + self.patch_size, self.x:self.x + self.patch_size, 0
             ]
-            stack.append(feature_patch)
+            stack[:, :, :, feature_idx] = feature_patch
         self.patch = {}
-        self.patch["inputs"] = np.concatenate(stack, axis=-1)
+        self.patch["inputs"] = stack
         self.patch[self.labels] = self.tile_group[self.labels][
             self.y:self.y + self.patch_size, self.x:self.x + self.patch_size, :
         ].astype(np.float32)
@@ -112,6 +121,7 @@ class ConsecutiveSampler(Sampler):
             self.x = 0
             self.tile_idx += 1
             self.sample_image()
+            self.load_time_index()
         self._extract_patch()
         self.x += self.patch_size
 
@@ -132,18 +142,31 @@ class RAMTileGroup:
         return self.datasets[key].copy()
 
 
+# def move_sampler_to_ram(sampler, keys=None):
+#     import types
+
+#     sampler.cached_tile_groups = {}
+#     sampler.nonram_access_tile_group = sampler.access_tile_group
+
+#     def ram_access_tile_group(self, tile):
+#         if tile not in self.cached_tile_groups:
+#             tile_group = self.nonram_access_tile_group(tile)
+#             ram_tile_group = RAMTileGroup(tile_group, keys=keys)
+#             self.cached_tile_groups[tile] = ram_tile_group
+#         return self.cached_tile_groups[tile]
+
+#     sampler.access_tile_group = types.MethodType(ram_access_tile_group, sampler)
+#     return sampler
+
+
 def move_sampler_to_ram(sampler, keys=None):
-    import types
+    dataset = {}
 
-    sampler.cached_tile_groups = {}
-    sampler.nonram_access_tile_group = sampler.access_tile_group
+    for tile in tqdm(sampler.tiles, desc="Caching data"):
+        tile_group = sampler.access_tile_group(tile)
+        ram_tile_group = RAMTileGroup(tile_group, keys=keys)
+        dataset[tile] = ram_tile_group
 
-    def ram_access_tile_group(self, tile):
-        if tile not in self.cached_tile_groups:
-            tile_group = self.nonram_access_tile_group(tile)
-            ram_tile_group = RAMTileGroup(tile_group, keys=keys)
-            self.cached_tile_groups[tile] = ram_tile_group
-        return self.cached_tile_groups[tile]
-
-    sampler.access_tile_group = types.MethodType(ram_access_tile_group, sampler)
+    sampler.dataset.close()
+    sampler.dataset = dataset
     return sampler

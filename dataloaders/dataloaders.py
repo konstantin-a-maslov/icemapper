@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import dataloaders
 import dataloaders.transformations
+import joblib
 import gc
 
 
@@ -41,14 +42,24 @@ class DataSequence():
     def __getitem__(self, idx):
         if idx == 0:
             self.sampler.reset()
-        self.batch_list = []
-        self.sample_idx = 0
-        while self.sample_idx < self.batch_size:
+            
+        def sample_one_patch():
             sample = self.sampler.sample(before_sampling_plugins=self.before_sampling_plugins)
             for plugin in self.after_sampling_plugins:
                 sample = plugin.after_sampling(sample)
-            self.batch_list.append(sample)
-            self.sample_idx += 1
+            return sample
+        
+        self.batch_list = joblib.Parallel(n_jobs=self.batch_size, prefer="threads")(
+            joblib.delayed(sample_one_patch)() 
+            for _ in range(self.batch_size)
+        )
+        # self.batch_list = []
+        # for _ in range(self.batch_size):
+        #     sample = self.sampler.sample(before_sampling_plugins=self.before_sampling_plugins)
+        #     for plugin in self.after_sampling_plugins:
+        #         sample = plugin.after_sampling(sample)
+        #     self.batch_list.append(sample)
+        
         batch_x, batch_y = self.__reformat(self.batch_list)
         for plugin in self.on_finalising_plugins:
             batch_x, batch_y = plugin.on_finalising(batch_x, batch_y)
@@ -58,10 +69,11 @@ class DataSequence():
         features = batch_list[0].keys()
         batch = {}
         for feature in features:
-            feature_list = []
-            for item in batch_list:
-                feature_list.append(item[feature])
-            batch[feature] = np.array(feature_list)
+            item_shape = batch_list[0][feature].shape
+            feature_arr = np.empty((self.batch_size, *item_shape), dtype=np.float32)
+            for item_idx, item in enumerate(batch_list):
+                feature_arr[item_idx] = item[feature]
+            batch[feature] = feature_arr
         batch_x = {_: batch[_] for _ in batch if _ != self.labels}
         batch_y = batch[self.labels]
         return batch_x, batch_y
@@ -74,7 +86,7 @@ def DataLoader(
     features,
     batch_size, 
     labels="outlines", 
-    prefetch=4, 
+    prefetch=1, 
     timesteps=15, 
     n_classes=2, 
     len_factor=1
@@ -109,7 +121,7 @@ def DataLoader(
         if mode == "train":
             sampler = dataloaders.RandomSampler(dataset_path, patch_size, features)
             plugins = [
-                dataloaders.ShuffleTimeIndex(p=0.2),
+                dataloaders.ShuffleTimeIndex(p=0.25),
                 dataloaders.Augmentation([
                     dataloaders.transformations.random_vertical_flip(p=0.5),
                     dataloaders.transformations.random_horizontal_flip(p=0.5),
@@ -117,6 +129,9 @@ def DataLoader(
                     dataloaders.transformations.crop_and_scale(patch_size=patch_size, scale=0.8, p=0.25),
                     dataloaders.transformations.add_gamma_correction(gamma_l=0.8, gamma_r=1.2, p=0.25),
                     dataloaders.transformations.add_gaussian_shift(sigma=0.025, p=0.25), 
+                    # dataloaders.transformations.swap_timesteps(p=0.1),
+                    # dataloaders.transformations.feature_occlusion(max_obstruction_size=patch_size // 2, p=0.5),
+                    # dataloaders.transformations.reverse_time(p=0.25),
                 ]),
                 dataloaders.AddLabelSmoothing(),
             ]
@@ -147,5 +162,8 @@ def DataLoader(
         ),
         args=(dataset_path, mode, patch_size, features, batch_size, labels, len_factor)
     )
-    dataloader = dataloader.prefetch(prefetch)
+    if mode == "val":
+        dataloader = dataloader.cache()
+    if prefetch > 0:
+        dataloader = dataloader.prefetch(prefetch)
     return dataloader, steps_per_epoch

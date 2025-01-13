@@ -39,17 +39,9 @@ class ShuffleTimeIndex(Plugin):
         for feature in features:
             t_min = 0
             t_max = tile_group[feature].shape[0] - 1
-            new_index = []
-            for t in time_index[feature]:
-                new_t = t
-                if np.random.rand() < self.p:
-                    new_t += np.random.choice([-1, 1])
-                    if new_t < t_min:
-                        new_t = t_min
-                    elif new_t > t_max:
-                        new_t = t_max
-                new_index.append(new_t)
-            time_index[feature] = new_index
+            diff = np.random.choice([0, -1, 1], size=len(time_index[feature]), p=[1 - self.p, self.p / 2, self.p / 2])
+            time_index[feature] = time_index[feature] + diff
+            time_index[feature] = np.clip(time_index[feature], t_min, t_max)
 
 
 class Augmentation(Plugin):
