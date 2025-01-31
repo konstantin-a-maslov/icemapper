@@ -6,6 +6,7 @@
 
 <br/>
 
+**!The repository already contains all necessary source code and data to replicate the results presented in the manuscript. Yet, we are still working on the command line interfaces and a detailed README!**
 
 Glaciers are one of the essential climate variables.
 Tracking their areal changes over time is of high importance for monitoring the impacts of climate change and designing adaptation strategies. 
@@ -16,10 +17,8 @@ We test two options for integrating SAR image time series into deep learning mod
 Both proposed models achieve an intersection over union (IoU) of 0.964 on the test subset. 
 Our results highlight the applicability of SAR data in glacier mapping with the potential to obtain glacier inventories with higher temporal resolution. 
 
-**!The repository is in progress!**
 
-
-## Datasets
+## Data access
 
 
 ## Installation 
@@ -29,6 +28,10 @@ Our results highlight the applicability of SAR data in glacier mapping with the 
 
 
 ## Pretrained models
+
+Luckily, the number of parameters is small enough, so the weights are directly deposited in this repository. 
+You will find them in [the weights folder](weights). 
+The file names follow the template `ICEmapper_<maxpool|tweightedpool>_<FEATURES,>.h5`. 
 
 
 ## License
@@ -48,7 +51,7 @@ To cite the paper/repository, please use the following bib entry.
 <!-- TODO: Update BibTeX once published in a journal```
 @article{INDEX,
     title={TITLE},
-    author={Maslov, Konstantin A. and Persello, Claudio and Schellenberger, Thomas and Stein, Alfred},
+    author={Maslov, Konstantin A. and Schellenberger, Thomas and Persello, Claudio and Stein, Alfred},
     journal={},
     year={YEAR},
     volume={},
