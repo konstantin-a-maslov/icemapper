@@ -126,3 +126,72 @@ def ICEmapper_v2(
 #         name=name,
 #         **kwargs
 #     )
+
+
+def ULSTMMini(
+    input_shape, n_outputs, n_steps=2, last_activation="softmax", start_n_filters=32,
+    dropout=0, mcdropout=False, pooling=tf.keras.layers.MaxPooling3D, name="ULSTM",
+    **kwargs
+):
+    """
+    This is a deprecated model that we tested in our preliminary experiments reported in IGARSS24
+    (https://doi.org/10.1109/IGARSS53475.2024.10640676).
+    We keep this implementation here for those who is interested in that methodology comparison.
+    Yet, it is not integrated with the new model we have now (ICEmapper), and using it with the
+    same CLI will require some basic coding.
+    We do not proceed with this model as it does not provide convincing performance gains, while
+    being more computationally demanding. 
+    """
+    inputs = tf.keras.layers.Input(input_shape, name="features")
+
+    encoded = []
+    x = inputs
+    n_filters = start_n_filters
+    for step in range(n_steps):
+        if step > 0:
+            res = x
+            res = tf.keras.layers.Dense(n_filters, use_bias=False)(res)
+        x = tf.keras.layers.Conv3D(n_filters, (1, 3, 3), padding="same")(x)
+        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.LeakyReLU()(x)
+
+        x, output1, _, output2, _ = tf.keras.layers.Bidirectional(
+            tf.keras.layers.ConvLSTM2D(n_filters // 2, (3, 3), padding="same", return_sequences=True, return_state=True),
+            merge_mode="concat",
+        )(x)
+        output = tf.keras.layers.Concatenate()([output1, output2])
+        encoded.append(output)
+
+        if step > 0:
+            x = x + res
+        x = pooling(pool_size=(1, 2, 2), padding="same")(x)
+        if dropout:
+            x = tf.keras.layers.SpatialDropout3D(dropout)(x, training=mcdropout)
+        n_filters *= 2
+
+    res = x
+    res = tf.keras.layers.Dense(n_filters, use_bias=False)(res)
+    res = tf.reduce_mean(res, axis=1)
+    x = tf.keras.layers.Conv3D(n_filters, (1, 3, 3), padding="same")(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.LeakyReLU()(x)
+    x = tf.keras.layers.Bidirectional(
+        tf.keras.layers.ConvLSTM2D(n_filters // 2, (3, 3), padding="same", return_sequences=False, return_state=False),
+        merge_mode="concat",
+    )(x)
+    output = x + res
+    encoded.append(output)
+
+    decoder = ResUNetDecoder(
+        input_shape=encoded[-1].shape[1:],
+        n_outputs=n_outputs,
+        n_steps=n_steps,
+        last_activation=last_activation,
+        dropout=dropout,
+        mcdropout=mcdropout,
+        name="ULSTMMiniDecoder",
+    )
+    outputs = decoder(encoded[::-1])
+
+    model = tf.keras.models.Model(inputs=inputs, outputs=outputs, name=name, **kwargs)
+    return model
