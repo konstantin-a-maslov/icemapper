@@ -46,6 +46,8 @@ We moved the algorithms for ice divides reconstruction to [a different repositor
 
 ## Citing
 
+**!To be updated once the journal paper is published!**
+
 To cite the paper/repository, please use the following bib entry. 
 
 <!-- TODO: Update BibTeX once published in a journal```
