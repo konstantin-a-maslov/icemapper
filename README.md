@@ -14,7 +14,7 @@ Here we introduce ICEmapper, a deep learning model that maps glacier outlines fr
 We used this model to retrieve Svalbard glacier outlines for 2016&ndash;2024 and found a tripling of the glacier area loss rate ($-260$ km$^2$ a$^{-1}$) in the last decade as compared to that previously reported for 1980&ndash;2010 ($-80$ km$^2$ a$^{-1}$). 
 This acceleration is largely driven by increased calving at tidewater glaciers and the climatic warming signal impacting land-terminating glaciers. 
 Additionally, our analysis shows significant area changes related to glacier surging, namely, the Nathorstbreen system and Austfonna, Basin-3 surges. 
-These two surges collectively added to the area change in 2006&ndash;2016 ($+194.30$ km$^2$ or $+0.59\%$), thus delaying the regionwide area loss by approximately two years. 
+These two surges collectively added to the area change in 2006&ndash;2016 ($+194.30\text{ }\text{km}^2$ or $+0.59$%), thus delaying the regionwide area loss by approximately two years. 
 Our results indicate a significant acceleration in glacier area loss in Svalbard, and we anticipate broader applications of our method to track glacier changes on larger scales.
 
 
