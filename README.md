@@ -1,4 +1,4 @@
-# Glacier Mapping from Sentinel-1 SAR Time Series with Deep Learning in Svalbard
+# ICEmapper
 
 [Konstantin A. Maslov](https://people.utwente.nl/k.a.maslov), [Thomas Schellenberger](https://www.mn.uio.no/geo/english/people/aca/geohyd/thosche/), [Claudio Persello](https://people.utwente.nl/c.persello), [Alfred Stein](https://people.utwente.nl/a.stein)
 
@@ -8,14 +8,14 @@
 
 **!The repository already contains all necessary source code and data to replicate the results presented in the manuscript. Yet, we are still working on the command line interfaces and a detailed README!**
 
-Glaciers are one of the essential climate variables.
-Tracking their areal changes over time is of high importance for monitoring the impacts of climate change and designing adaptation strategies. 
-Mapping glaciers from optical remote sensing data might result in a very limited temporal resolution due to the absence of cloud-free imagery at the end of the ablation season. 
-Synthetic aperture radar (SAR) solves this problem as it can operate in almost all weather conditions. 
-Here, we present a deep learning strategy for glacier mapping based solely on Sentinel-1 SAR data in Svalbard. 
-We test two options for integrating SAR image time series into deep learning models, namely, 3D convolutions and long short-term memory (LSTM) cells.
-Both proposed models achieve an intersection over union (IoU) of 0.964 on the test subset. 
-Our results highlight the applicability of SAR data in glacier mapping with the potential to obtain glacier inventories with higher temporal resolution. 
+The rapid warming in polar regions highlights the need to monitor climate change impacts such as glacier retreat and related global sea level rise. 
+Glacier area is an essential climate variable but its tracking is complicated by the labour-intensive manual digitisation of satellite imagery.
+Here we introduce ICEmapper, a deep learning model that maps glacier outlines from Sentinel-1 time series with accuracy on par with human experts.
+We used this model to retrieve Svalbard glacier outlines for 2016--2024 and found a tripling of the glacier area loss rate ($-260\,\text{km}^2\,\text{a}^{-1}$) in the last decade as compared to that previously reported for 1980--2010 ($-80\,\text{km}^2\,\text{a}^{-1}$). 
+This acceleration is largely driven by increased calving at tidewater glaciers and the climatic warming signal impacting land-terminating glaciers. 
+Additionally, our analysis shows significant area changes related to glacier surging, namely, the Nathorstbreen system and Austfonna, Basin-3 surges. 
+These two surges collectively added to the area change in 2006--2016 ($+194.30\,\text{km}^2$ or $+0.59\%$), thus delaying the regionwide area loss by approximately two years. 
+Our results indicate a significant acceleration in glacier area loss in Svalbard, and we anticipate broader applications of our method to track glacier changes on larger scales.
 
 
 ## Data access
