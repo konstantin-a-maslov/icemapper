@@ -2,7 +2,7 @@
 
 [Konstantin A. Maslov](https://people.utwente.nl/k.a.maslov), [Thomas Schellenberger](https://www.mn.uio.no/geo/english/people/aca/geohyd/thosche/), [Claudio Persello](https://people.utwente.nl/c.persello), [Alfred Stein](https://people.utwente.nl/a.stein)
 
-[[`Paper`](https://ieeexplore.ieee.org/document/10640676)] [[`Datasets`](#datasets)] [[`BibTeX`](#citing)] 
+[[`Paper`](https://doi.org/10.31223/X5472T)] [[`Datasets`](#datasets)] [[`BibTeX`](#citing)] 
 
 <br/>
 
@@ -63,12 +63,12 @@ To cite the paper/repository, please use the following bib entry.
 }
 ``` -->
 ```
-@inproceedings{glaciermappingfromsar2024,
-    title={Glacier Mapping from Sentinel-1 SAR Time Series with Deep Learning in Svalbard}, 
+@article{icemapper2025,
+    title={Three times accelerated glacier area loss in Svalbard revealed by deep learning},
     author={Maslov, Konstantin A. and Schellenberger, Thomas and Persello, Claudio and Stein, Alfred},
-    booktitle={IGARSS 2024 - 2024 IEEE International Geoscience and Remote Sensing Symposium}, 
-    year={2024},
-    pages={14-17},
-    doi={10.1109/IGARSS53475.2024.10640676}
+    year={2025},
+    archivePrefix={EarthArXiv},
+    doi={10.31223/X5472T},
+    url={https://doi.org/10.31223/X5472T},
 }
 ```
