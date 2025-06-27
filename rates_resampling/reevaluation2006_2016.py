@@ -16,7 +16,7 @@ def main():
     uncertainty_range_km2 = 500
     area_uncertainty_mult_sigma = uncertainty_range_km2 / 33775 / 1.96 # from Nuth et al., 2013
     n = 100000
-    n = 1000 # use for debugging
+    # n = 1000 # use for debugging
 
     rgi_composition = [
         (year, rgi[rgi.year == year].area_km2.sum() / rgi_area_km2)
