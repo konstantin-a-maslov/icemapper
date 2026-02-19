@@ -21,7 +21,7 @@ Our results indicate a significant acceleration in glacier area loss in Svalbard
 
 ## Data access
 
-The ICEmapper training dataset is publicly available at [<DATASET-URL-HERE>](<DATASET-URL-HERE>). 
+The ICEmapper training dataset is publicly available at [DATASET-URL-HERE](DATASET-URL-HERE). 
 Download and unzip the dataset into a directory of your choice. 
 Adjust the folder paths in the dependent scripts (`train.py`, `predict_and_evaluate.py` and `confidence_calibration.ipynb`) accordingly. 
 
@@ -30,11 +30,30 @@ Adjust the folder paths in the dependent scripts (`train.py`, `predict_and_evalu
 
 ### Installation
 
+We recommend using the [Anaconda](https://www.anaconda.com/download) or [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) Python distributions. 
+After installing one of them, one can use the `conda` package manager to install the required libraries in a new environment called `massive-tf` and activate it by running
+```
+conda create -n massive-tf "tensorflow<2.16" h5py scikit-learn rioxarray geopandas jupyterlab tqdm matplotlib -c conda-forge
+conda activate massive-tf
+```
+We tested this configuration on Ubuntu 22.04 (see `env.yml` for the exported environment). 
+We also expect it to work on any modern Linux distribution or Windows, given properly configured NVIDIA GPU drivers.
+
+
 ### Training
+
+
 
 ### Evaluation on HDF5 splits
 
+
+### Uncertainty calibration
+
+
+
 ### Applying ICEmapper to your own GeoTIFF time series
+
+
 
 ### Pretrained models
 
