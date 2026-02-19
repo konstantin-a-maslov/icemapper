@@ -21,25 +21,37 @@ Our results indicate a significant acceleration in glacier area loss in Svalbard
 
 ## Data access
 
+The ICEmapper training dataset is publicly available at [<DATASET-URL-HERE>](<DATASET-URL-HERE>). 
+Download and unzip the dataset into a directory of your choice. 
+Adjust the folder paths in the dependent scripts (`train.py`, `predict_and_evaluate.py` and `confidence_calibration.ipynb`) accordingly. 
+
 
 ## Getting started
 
+### Installation
 
-## Pretrained models
+### Training
+
+### Evaluation on HDF5 splits
+
+### Applying ICEmapper to your own GeoTIFF time series
+
+### Pretrained models
 
 Luckily, the number of parameters is small enough, so the weights are directly deposited in this repository. 
 You will find them in [the weights folder](weights). 
 The file names follow the template `ICEmapper_<maxpool|tweightedpool>_<FEATURES,>.h5`. 
 
 
+### Ice divides
+
+We moved the algorithms for ice divides reconstruction to [a different repository](https://github.com/konstantin-a-maslov/massive_ice_divides).
+
+
 ## License
 
 This software is licensed under the [GNU General Public License v2](LICENSE).
 
-
-## Ice divides
-
-We moved the algorithms for ice divides reconstruction to [a different repository](https://github.com/konstantin-a-maslov/massive_ice_divides).
 
 
 ## Citing
