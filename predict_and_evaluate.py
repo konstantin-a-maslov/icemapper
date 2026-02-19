@@ -64,15 +64,9 @@ def main(args):
     model_builder = icemapper.ICEmapper_v2 if args.version == "v2" else icemapper.ICEmapper
     
     data_folder = "/extravolume/data/icemapper"
-    # dataset_path = f"{data_folder}/test.hdf5"
-    # output_probs_path = f"outputs/{model_name}/probs.hdf5"
-    # output_eval_path = f"outputs/{model_name}/eval.pickle"
-    # dataset_path = f"{data_folder}/val.hdf5"
-    # output_probs_path = f"outputs/{model_name}/probs_val.hdf5"
-    # output_eval_path = f"outputs/{model_name}/eval_val.pickle"
-    dataset_path = f"{data_folder}/train.hdf5"
-    output_probs_path = f"outputs/{model_name}/probs_train.hdf5"
-    output_eval_path = f"outputs/{model_name}/eval_train.pickle"
+    dataset_path = f"{data_folder}/test.hdf5"
+    output_probs_path = f"outputs/{model_name}/probs.hdf5"
+    output_eval_path = f"outputs/{model_name}/eval.pickle"
     
     timesteps = 15
     patch_size = 384
