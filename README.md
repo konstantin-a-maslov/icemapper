@@ -6,22 +6,20 @@
 
 <br/>
 
-**!The repository already contains all necessary source code and data to replicate the results presented in the manuscript. Yet, we are still working on the command line interfaces and a detailed README!**
+![results](assets/results.png)
 
 The rapid warming in polar regions highlights the need to monitor climate change impacts such as glacier retreat and related global sea level rise. 
 Glacier area is an essential climate variable but its tracking is complicated by the labour-intensive manual digitisation of satellite imagery.
 Here we introduce ICEmapper, a deep learning model that maps glacier outlines from Sentinel-1 time series with accuracy on par with human experts.
-We used this model to retrieve Svalbard glacier outlines for 2016&ndash;2024 and found a tripling of the glacier area loss rate ($-260\text{ }\text{km}^2\text{ }\text{a}^{-1}$) in the last decade as compared to that previously reported for 1980&ndash;2010 ($-80\text{ }\text{km}^2\text{ }\text{a}^{-1}$). 
-This acceleration is largely driven by increased calving at tidewater glaciers and the climatic warming signal impacting land-terminating glaciers. 
-Additionally, our analysis shows significant area changes related to glacier surging, namely, the Nathorstbreen system and Austfonna, Basin-3 surges. 
-These two surges collectively added to the area change in 2006&ndash;2016 ($+194.30\text{ }\text{km}^2$ or $+0.59$%), thus delaying the regionwide area loss by approximately two years. 
-Our results indicate a significant acceleration in glacier area loss in Svalbard, and we anticipate broader applications of our method to track glacier changes on larger scales.
+We used this model to retrieve Svalbard glacier outlines for 2016&ndash;2024 and found a tripling of the glacier area loss rate in the last decade (-227 km<sup>2</sup> a<sup>-1</sup>) as compared to that of 1970&ndash;2006 (-68 km<sup>2</sup> a<sup>-1</sup>). 
+Our analysis shows significant area changes related to glacier surging, namely, the Nathorstbreen system and Austfonna, Basin-3 surges. 
+These two surges collectively added to the area change in 2006&ndash;2016 (+194.30 km<sup>2</sup> or +0.60%), thus delaying the regionwide area loss by two&ndash;three years. 
+In contrast, during 2016&ndash;2024, surging glaciers showed statistically significantly faster area loss rates than non-surging glaciers.
+Our results indicate a significant acceleration in glacier area loss in Svalbard, and we anticipate broader applications of our method to track glacier changes on larger scales. 
 
+<br/>
 
 ## Data access
-
-
-## Installation 
 
 
 ## Getting started
