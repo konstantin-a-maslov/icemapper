@@ -21,7 +21,7 @@ Our results indicate a significant acceleration in glacier area loss in Svalbard
 
 ## Data access
 
-The ICEmapper training dataset is publicly available at [DATASET-URL-HERE](DATASET-URL-HERE). 
+The ICEmapper training dataset is publicly available at [https://doi.org/10.11582/2026.3zay2ryx](https://doi.org/10.11582/2026.3zay2ryx). 
 Download and unpack the dataset into a directory of your choice. 
 Adjust the folder paths in the dependent scripts (`train.py`, `predict_and_evaluate.py`, `confidence_calibration.ipynb` and `block_bootstrapping.py`) accordingly. 
 
